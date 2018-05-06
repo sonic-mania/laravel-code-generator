@@ -476,6 +476,7 @@ abstract class HtmlGeneratorBase
             ->replaceFieldRequired($stub, $parser->isRequired())
             ->replaceFieldPlaceHolder($stub, $this->getFieldPlaceHolderForMenu($field->getPlaceholder(), $field->name))
             ->replaceCssClass($stub, $field->cssClass)
+            ->replaceCommonTemplates($stub, $field)
             ->wrapField($stub, $field);
 
         return $stub;
@@ -598,6 +599,7 @@ abstract class HtmlGeneratorBase
             ->replaceFieldMaxValue($stub, isset($field->range[1]) ? $field->range[1] : 10)
             ->replaceSelectedValue($stub, $this->getSelectedValueForMenu($field))
             ->replaceFieldPlaceHolder($stub, $this->getFieldPlaceHolderForMenu($field->getPlaceholder(), $field->name))
+            ->replaceCommonTemplates($stub, $field)
             ->wrapField($stub, $field);
 
         return $stub;
@@ -648,6 +650,7 @@ abstract class HtmlGeneratorBase
             ->replaceFieldMaxLengthName($stub, $parser->getMaxLength())
             ->replaceFieldRequired($stub, $parser->isRequired())
             ->replaceFieldPlaceHolder($stub, $this->getFieldPlaceHolder($field->getPlaceholder()))
+            ->replaceCommonTemplates($stub, $field)
             ->wrapField($stub, $field);
 
         return $stub;
@@ -679,6 +682,7 @@ abstract class HtmlGeneratorBase
             ->replaceFieldRequired($stub, $parser->isRequired())
             ->replaceFieldPlaceHolder($stub, $this->getFieldPlaceHolder($field->getPlaceholder()))
             ->replaceFieldStep($stub, $this->getStepsValue($field->getDecimalPointLength()))
+            ->replaceCommonTemplates($stub, $field)
             ->wrapField($stub, $field);
 
         return $stub;
@@ -730,6 +734,7 @@ abstract class HtmlGeneratorBase
             ->replaceFieldLabel($stub, $this->getLabelFromField($standardLabel ? $field : null))
             ->replaceFieldValidationHelper($stub, $this->getNewHelper($field))
             ->replaceFieldInput($stub, $fieldStub)
+            ->replaceCommonTemplates($stub, $field)
             ->replaceRequiredClass($stub, $required);
 
         $fieldStub = $stub;
@@ -766,7 +771,8 @@ abstract class HtmlGeneratorBase
         $labelStub = $this->getStubContent('form-label-field.blade', $this->template);
 
         $this->replaceFieldName($labelStub, $name)
-            ->replaceFieldTitle($labelStub, $this->getTitle($label));
+            ->replaceFieldTitle($labelStub, $this->getTitle($label))
+            ->replaceCommonTemplates($stub, $field);
 
         return $labelStub;
     }
