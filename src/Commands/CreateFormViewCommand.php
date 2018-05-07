@@ -120,12 +120,33 @@ class CreateFormViewCommand extends ViewsCommandBase
             $variables[] = $modelName;
         }
 
-        $collections = $this->getRelationCollections($fields, $view);
+        $collections = $this->getRelationCollections($fields, 'form');
 
         foreach ($collections as $collection) {
             $variables[] = $collection->getCollectionName();
         }
 
         return $this->getCompactVariables($variables);
+    }
+
+    
+    /**
+     * Gets the needed compact variables for the edit/create views.
+     *
+     * @param array $fields
+     *
+     * @return array
+     */
+    protected function getRelationCollections(array $fields, $view)
+    {
+        $variables = [];
+
+        foreach ($fields as $field) {
+            if ($field->hasForeignRelation() && $field->isOnView($view)) {
+                $variables[] = $field->getForeignRelation();
+            }
+        }
+
+        return $variables;
     }
 }
