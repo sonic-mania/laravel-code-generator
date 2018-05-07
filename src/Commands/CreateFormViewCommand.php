@@ -55,7 +55,7 @@ class CreateFormViewCommand extends ViewsCommandBase
             $htmlCreator = $this->getHtmlGenerator($resources->fields, $input->modelName, $this->getTemplateName());
             $headers = $this->getHeaderFieldAccessor($resources->fields, $input->modelName);
             
-            $viewVariables = $this->getCompactVariablesFor($fields, $this->getSingularVariable($input->modelName));
+            $viewVariables = $this->getCompactVariablesFor($resources->fields, $this->getSingularVariable($input->modelName));
         
             $this->createLanguageFile($input->languageFileName, $input->resourceFile, $input->modelName)
                 ->replaceCommonTemplates($stub, $input, $resources->fields)
