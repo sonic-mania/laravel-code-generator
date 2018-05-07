@@ -54,10 +54,14 @@ class CreateFormViewCommand extends ViewsCommandBase
             $stub = $this->getStub();
             $htmlCreator = $this->getHtmlGenerator($resources->fields, $input->modelName, $this->getTemplateName());
             $headers = $this->getHeaderFieldAccessor($resources->fields, $input->modelName);
-
+            
+            $viewVariables = $this->getCompactVariablesFor($fields, $this->getSingularVariable($input->modelName));
+        
             $this->createLanguageFile($input->languageFileName, $input->resourceFile, $input->modelName)
                 ->replaceCommonTemplates($stub, $input, $resources->fields)
+                ->replaceModelName($stub, $input->modelName)
                 ->replaceFields($stub, $htmlCreator->getHtmlFields())
+                ->replaceVariablesFields($stub, $viewVariables)
                 ->replaceModelHeader($stub, $headers)
                 ->createFile($destenationFile, $stub)
                 ->info('Form view was crafted successfully.');
@@ -75,5 +79,53 @@ class CreateFormViewCommand extends ViewsCommandBase
     protected function replaceFields(&$stub, $fields)
     {
         return $this->replaceTemplate('form_fields_html', $fields, $stub);
+    }
+
+    /**
+     * Replace form view variables (with relations)
+     */
+    protected function replaceVariablesFields(&$stub, $fields)
+    {
+        return $this->replaceTemplate('view_variables', $fields, $stub);
+    }
+
+    /**
+     * Converts given array of variables to a compact statements.
+     *
+     * @param array $variables
+     *
+     * @return string
+     */
+    protected function getCompactVariables(array $variables)
+    {
+        if (empty($variables)) {
+            return '';
+        }
+
+        return implode(',', Helpers::wrapItems($variables));
+    }
+
+    /**
+     * Gets the needed compact variables for the edit/create views.
+     *
+     * @param array $fields
+     *
+     * @return string
+     */
+    protected function getCompactVariablesFor(array $fields, $modelName)
+    {
+        $variables = [];
+
+        if (!empty($modelName)) {
+            $variables[] = $modelName;
+        }
+
+        $collections = $this->getRelationCollections($fields, $view);
+
+        foreach ($collections as $collection) {
+            $variables[] = $collection->getCollectionName();
+        }
+
+        return $this->getCompactVariables($variables);
     }
 }
